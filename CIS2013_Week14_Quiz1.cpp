@@ -1,6 +1,13 @@
 #include <iostream>
 #include <string>
+#include <cstdlib>
+#include <ctime>
 using namespace std;
+
+typedef char* IPtr;
+IPtr b;
+int x, y;
+// srand(time(0));
 
 class Game{
 	private:
@@ -41,6 +48,8 @@ class mine_sweeper: public Game{
 	char selected_squares = ' ';
 	int bomb_squares = 0;
 	
+	
+	
 	int get_row(){
 		cout << "Number of rows: ";
 		cin >> rows;
@@ -66,21 +75,62 @@ class mine_sweeper: public Game{
 		cout << endl;
 		for (int i=0; i<columns; i++){
 			cout << i << "|";
-		}
 			for (int j=0; j<rows; j++){cout << " " << ".";}
 				cout << endl;
 		}
+	}
+	
+	void board(){
+		IPtr *b = new IPtr[columns];
+		for (int i=0; i<columns; i++){
+			b[i] = new char[rows];
+		}
+
+//initialize array values
+		for (int i=0; i<columns; i++){
+			for (int j=0; j<rows; j++){
+			b[i][j]= '.';
+			}
+		}
+		while (bomb_squares>0){
+			int rand_one = (rand() % columns);
+			int rand_two = (rand() % rows);
+			if (b[rand_one][rand_two]!='X'){
+			b[rand_one][(rand_two)] = 'X';
+			bomb_squares--;
+			}
+		}
+		
+	}
 	
 	mine_sweeper(){
 		get_row();
 		get_column();
 		get_mines();
+		board();
 	}
-	
 };
 
 int main(){
 	mine_sweeper one;
+	one.print_board();
+	
+	
 	
 	return 0;
 }
+
+void coordinates(){
+	cout << "Pick x and y coordinates: ";
+	cin >> x >> y;
+}
+
+
+
+
+
+
+
+
+
+
