@@ -7,7 +7,7 @@ using namespace std;
 typedef char* IPtr;
 IPtr b;
 int x, y;
-// srand(time(0));
+void coordinates();
 
 class Game{
 	private:
@@ -103,6 +103,8 @@ class mine_sweeper: public Game{
 		
 	}
 	
+	
+	
 	mine_sweeper(){
 		get_row();
 		get_column();
@@ -112,8 +114,12 @@ class mine_sweeper: public Game{
 };
 
 int main(){
+	bool alive = true;
 	mine_sweeper one;
 	one.print_board();
+	while (alive){
+		coordinates();
+	}
 	
 	
 	
