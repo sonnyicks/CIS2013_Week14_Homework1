@@ -100,7 +100,6 @@ class mine_sweeper: public Game{
 			bomb_squares--;
 			}
 		}
-		
 	}
 	
 	
@@ -120,9 +119,6 @@ int main(){
 	while (alive){
 		coordinates();
 	}
-	
-	
-	
 	return 0;
 }
 
