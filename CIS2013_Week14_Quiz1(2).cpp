@@ -25,7 +25,7 @@ class Game{
 		}
 		
 		int set_score(){
-			score=0;
+			score++;
 			return score;
 		}
 };
@@ -36,21 +36,30 @@ class Mine_Sweeper: public Game{
 		int rows=0;
 		int clms=0;
 		int area=0;
-		char selected_squares='c';
 		int bomb_squares=0;
 		int *print;
 		int x=0;
 		int y=0;
+		int selected_square=0;
+		bool alive=true;
 		
 	public:
 		void set_brd_size(){
+			bool valid=false;
 			
 			srand(time(0));
-			cout << "Number of Columns: ";
-			cin >> clms;
-			cout << "Number of Rows: ";
-			cin >> rows;
-			area=(clms*rows);
+			while (!valid){
+				cout << "Number of Columns: ";
+				cin >> clms;
+				cout << "Number of Rows: ";
+				cin >> rows;
+				area=(clms*rows);
+				if (area<=bomb_squares){
+					cout << "Area not big enough for # of bombs; "
+							 << "choose again -" << endl;
+				}
+				else {valid=-true;}
+			}
 			brd_size = new char[area];
 			for (int i=0; i<area; i++){
 				brd_size[i]='.';
@@ -65,8 +74,7 @@ class Mine_Sweeper: public Game{
 			cin >> bomb_squares;
 			return bomb_squares;
 		}
-		//(x and y selection) if y = 1, brd_size[x-1] 7x8 grid selected
-		//x6,y1 (max7*y=7)- (Max7-x+1)
+
 		void prt_brd(){
 			int a=0;
 			cout << "   ";
@@ -86,15 +94,47 @@ class Mine_Sweeper: public Game{
 					cout << " " << i+1 << "|";
 					}
 				for (int j=0; j<clms; j++){
-					cout << " " << brd_size[a] << " ";
+						if (!alive){
+							cout << " " << brd_size[a] << " ";
+						}
+						else if (brd_size[a]==' '){
+							cout << "   ";
+						}
+						else{
+							cout << " . ";
+						}
 					a++;
 				}
 				cout << endl;
 			}
+			cout << "Score: " << get_score();
+		}
+		//(x and y selection) if y = 1, brd_size[x-1] 7x8 grid selected
+		//x6,y1 (max7*y=7)- (Max7-x+1)
+		int get_square(){
+			cout << "Enter X and Y coordinates," 
+					 <<	"press enter between each: ";
+		  cin >> x >> y;
+			selected_square=(clms*y)-(clms-x+1);
+			return selected_square;
+		}
+		
+		void try_bomb(){
+			if(brd_size[selected_square]=='@'){
+				brd_size[selected_square]='X';
+				cout << "        BOMB FOUND, YOU DIED!!!";
+				alive=false;
+			}
+			else if (brd_size[selected_square]==' '){
+				cout << "Square already searched; pick another -";
+			}
+			else {
+				brd_size[selected_square]=' ';
+				set_score();
+			}
 		}
 		Mine_Sweeper(){
 			set_name();
-			set_score();
 			set_bombs();
 			set_brd_size();
 			prt_brd();
