@@ -32,9 +32,10 @@ class Game{
 
 class Mine_Sweeper: public Game{
 	private:
-		char *brd_size;
+		int *brd_size;
 		int rows=0;
 		int clms=0;
+		int area=0;
 		char selected_squares='c';
 		int bomb_squares=0;
 		int *print;
@@ -45,29 +46,38 @@ class Mine_Sweeper: public Game{
 			cin >> clms;
 			cout << "Number of Rows: ";
 			cin >> rows;
-			brd_size = new char[(clms*rows)];
+			area=(clms*rows);
+			brd_size = new int[area];
+			for (int i=0; i<area; i++){
+				brd_size[i]=i;
+			}
 		}
-		
+			
 		int set_bombs(){
 			cout << "Number of bombs: ";
 			cin >> bomb_squares;
 			return bomb_squares;
 		}
-		
-		void prt_brd(){
+		//(x and y selection) if y = 1, brd_size[x-1] 7x8 grid selected
+		//x6,y1 (max7*y=7)- (Max7-x+1)
+		void prt_brd(){//adjust board for 2 digit clms and rows
+			int a=0;
+			cout << "  ";
 			for (int i=0; i<clms; i++){
-				cout << " " << i << " ";
+				cout << " " << i+1 << " ";
 			}
-			cout << endl;
+			cout << endl << "  ";
 			for (int i=0; i<clms; i++){
 				cout << "~~~";
 			}
 			cout << endl;
 			for (int i=0; i<rows; i++){
+				cout << i+1 << "|";
 				for (int j=0; j<clms; j++){
-					
+					cout << " " << brd_size[a] << " ";
+					a++;
 				}
-				
+				cout << endl;
 			}
 		}
 		Mine_Sweeper(){
