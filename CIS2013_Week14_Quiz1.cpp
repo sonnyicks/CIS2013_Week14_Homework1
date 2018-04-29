@@ -1,138 +1,161 @@
 #include <iostream>
-#include <string>
-#include <cstdlib>
 #include <ctime>
-using namespace std;
+#include <cstdlib>
+#include <string>
 
-typedef char* IPtr;
-IPtr b;
-int x, y;
-void coordinates();
+using namespace std;
 
 class Game{
 	private:
-	string name;
-	int score;
-	
+		string name;
+		int score=0;
 	public:
-	string get_name(){
-		cout << name;
-		return name;
-	}
-	int set_score(){
-		score=0;
-		return score;
-	}
-	
-	int get_score(){
-		cout << score;
-		return score;
-	}
-	
-	string set_name(){
-		cout << "Enter a name: ";
-		cin >> name;
-		return name;
-	}
-	
-	Game(){
-		set_name();
-	}
-	
+		string get_name(){
+			return name;
+		}
+		
+		string set_name(){
+			cout << "Name the game: ";
+			cin >> name;
+			return name;
+		}
+		
+		int get_score(){
+			return score;
+		}
+		
+		int set_score(){
+			score++;
+			return score;
+		}
 };
 
-class mine_sweeper: public Game{
+class Mine_Sweeper: public Game{
+	private:
+		char *brd_size;
+		int rows=0;
+		int clms=0;
+		int area=0;
+		int bomb_squares=0;
+		int *print;
+		int x=0;
+		int y=0;
+		int selected_square=0;
+
+		
 	public:
-	int rows = 0;
-	int columns = 0;
-	char selected_squares = ' ';
-	int bomb_squares = 0;
-	
-	
-	
-	int get_row(){
-		cout << "Number of rows: ";
-		cin >> rows;
-		return rows;
-	}
-	int get_column(){
-		cout << "Number of columns: ";
-		cin >> columns;
-		return columns;
-	}
-	int get_mines(){
-		cout << "Number of mines: ";
-		cin >> bomb_squares;
-		return bomb_squares;
-	}
-	
-	void print_board(){
-		cout << "   ";
-		for (int i=0; i<rows; i++){cout << i << " ";}
-			cout << endl;
-		cout << "   ";
-		for (int i=0; i<rows; i++){cout << "__";}
-		cout << endl;
-		for (int i=0; i<columns; i++){
-			cout << i << "|";
-			for (int j=0; j<rows; j++){cout << " " << ".";}
-				cout << endl;
-		}
-	}
-	
-	void board(){
-		IPtr *b = new IPtr[columns];
-		for (int i=0; i<columns; i++){
-			b[i] = new char[rows];
+		bool alive=true;
+		void set_brd_size(){
+			bool valid=false;
+			int left=bomb_squares;
+			srand(time(0));
+			while (!valid){
+				cout << "Number of Columns: ";
+				cin >> clms;
+				cout << "Number of Rows: ";
+				cin >> rows;
+				area=(clms*rows);
+				if (area<=bomb_squares){
+					cout << "Area not big enough for # of bombs; "
+							 << "choose again -" << endl;
+				}
+				else {valid=-true;}
+			}
+			brd_size = new char[area];
+			for (int i=0; i<area; i++){
+				brd_size[i]='.';
+			}
+			while(left!=0){
+				int r=(rand()%area);
+				if (brd_size[r]!='@'){
+					brd_size[r]='@';
+					left--;
+				}
+			}	
+		 }
+			
+		int set_bombs(){
+			cout << "Number of bombs: ";
+			cin >> bomb_squares;
+			return bomb_squares;
 		}
 
-//initialize array values
-		for (int i=0; i<columns; i++){
-			for (int j=0; j<rows; j++){
-			b[i][j]= '.';
+		void prt_brd(){
+			int a=0;
+			cout << "   ";
+			for (int i=0; i<clms; i++){
+				cout << " " << i+1 << " ";
+			}
+			cout << endl << "  ";
+			for (int i=0; i<clms; i++){
+				cout << "~~~";
+			}
+			cout << endl;
+			for (int i=0; i<rows; i++){
+				if (i+1>9){
+					cout << i+1 << "|";
+				}
+				else{
+					cout << " " << i+1 << "|";
+					}
+				for (int j=0; j<clms; j++){
+						if (!alive){
+							cout << " " << brd_size[a] << " ";
+						}
+						else if (brd_size[a]==' '){
+							cout << "   ";
+						}
+						else{
+							cout << " . ";
+						}
+					a++;
+				}
+				cout << endl;
+			}
+			cout << "Score: " << get_score() << endl;
+			if (alive){
+				cout << "No bomb found, still safe..." << endl;
 			}
 		}
-		while (bomb_squares>0){
-			int rand_one = (rand() % columns);
-			int rand_two = (rand() % rows);
-			if (b[rand_one][rand_two]!='X'){
-			b[rand_one][(rand_two)] = 'X';
-			bomb_squares--;
+
+		int get_square(){
+			cout << "Enter X and Y coordinates," 
+					 <<	"press enter between each: ";
+		  cin >> x >> y;
+			selected_square=(clms*y)-(clms-x+1);
+			return selected_square;
+		}
+		
+		void try_bomb(){
+			if(brd_size[selected_square]=='@'){
+				brd_size[selected_square]='X';
+				cout << "        BOMB FOUND, YOU DIED!!!" << endl;
+				alive=false;
+			}
+			else if (brd_size[selected_square]==' '){
+				cout << "Square already searched; pick another -";
+			}
+			else {
+				brd_size[selected_square]=' ';
+				set_score();
 			}
 		}
-	}
-	
-	
-	
-	mine_sweeper(){
-		get_row();
-		get_column();
-		get_mines();
-		board();
-	}
+		Mine_Sweeper(){
+			set_name();
+			set_bombs();
+			set_brd_size();
+			prt_brd();
+		}
 };
 
 int main(){
-	bool alive = true;
-	mine_sweeper one;
-	one.print_board();
-	while (alive){
-		coordinates();
+	Mine_Sweeper mygame;
+	while(mygame.alive){
+		mygame.get_square();
+		mygame.try_bomb();
+		mygame.prt_brd();
 	}
 	return 0;
 }
-
-void coordinates(){
-	cout << "Pick x and y coordinates: ";
-	cin >> x >> y;
-}
-
-
-
-
-
-
-
-
 
 
