@@ -32,24 +32,31 @@ class Game{
 
 class Mine_Sweeper: public Game{
 	private:
-		int *brd_size;
+		char *brd_size;
 		int rows=0;
 		int clms=0;
 		int area=0;
 		char selected_squares='c';
 		int bomb_squares=0;
 		int *print;
+		int x=0;
+		int y=0;
 		
 	public:
 		void set_brd_size(){
+			
+			srand(time(0));
 			cout << "Number of Columns: ";
 			cin >> clms;
 			cout << "Number of Rows: ";
 			cin >> rows;
 			area=(clms*rows);
-			brd_size = new int[area];
+			brd_size = new char[area];
 			for (int i=0; i<area; i++){
-				brd_size[i]=i;
+				brd_size[i]='.';
+			}
+			for (int i=0; i<=bomb_squares; i++){
+				brd_size[(rand()%area)]='@';
 			}
 		}
 			
@@ -60,9 +67,9 @@ class Mine_Sweeper: public Game{
 		}
 		//(x and y selection) if y = 1, brd_size[x-1] 7x8 grid selected
 		//x6,y1 (max7*y=7)- (Max7-x+1)
-		void prt_brd(){//adjust board for 2 digit clms and rows
+		void prt_brd(){
 			int a=0;
-			cout << "  ";
+			cout << "   ";
 			for (int i=0; i<clms; i++){
 				cout << " " << i+1 << " ";
 			}
@@ -72,7 +79,12 @@ class Mine_Sweeper: public Game{
 			}
 			cout << endl;
 			for (int i=0; i<rows; i++){
-				cout << i+1 << "|";
+				if (i+1>9){
+					cout << i+1 << "|";
+				}
+				else{
+					cout << " " << i+1 << "|";
+					}
 				for (int j=0; j<clms; j++){
 					cout << " " << brd_size[a] << " ";
 					a++;
@@ -83,8 +95,8 @@ class Mine_Sweeper: public Game{
 		Mine_Sweeper(){
 			set_name();
 			set_score();
-			set_brd_size();
 			set_bombs();
+			set_brd_size();
 			prt_brd();
 		}
 };
