@@ -41,12 +41,13 @@ class Mine_Sweeper: public Game{
 		int x=0;
 		int y=0;
 		int selected_square=0;
-		bool alive=true;
+
 		
 	public:
+		bool alive=true;
 		void set_brd_size(){
 			bool valid=false;
-			
+			int left=bomb_squares;
 			srand(time(0));
 			while (!valid){
 				cout << "Number of Columns: ";
@@ -64,10 +65,14 @@ class Mine_Sweeper: public Game{
 			for (int i=0; i<area; i++){
 				brd_size[i]='.';
 			}
-			for (int i=0; i<=bomb_squares; i++){
-				brd_size[(rand()%area)]='@';
-			}
-		}
+			while(left!=0){
+				int r=(rand()%area);
+				if (brd_size[r]!='@'){
+					brd_size[r]='@';
+					left--;
+				}
+			}	
+	}
 			
 		int set_bombs(){
 			cout << "Number of bombs: ";
@@ -107,7 +112,10 @@ class Mine_Sweeper: public Game{
 				}
 				cout << endl;
 			}
-			cout << "Score: " << get_score();
+			cout << "Score: " << get_score() << endl;
+			if (alive){
+				cout << "No bomb found, still safe..." << endl;
+			}
 		}
 		//(x and y selection) if y = 1, brd_size[x-1] 7x8 grid selected
 		//x6,y1 (max7*y=7)- (Max7-x+1)
@@ -122,7 +130,7 @@ class Mine_Sweeper: public Game{
 		void try_bomb(){
 			if(brd_size[selected_square]=='@'){
 				brd_size[selected_square]='X';
-				cout << "        BOMB FOUND, YOU DIED!!!";
+				cout << "        BOMB FOUND, YOU DIED!!!" << endl;
 				alive=false;
 			}
 			else if (brd_size[selected_square]==' '){
@@ -142,7 +150,14 @@ class Mine_Sweeper: public Game{
 };
 
 int main(){
-	Mine_Sweeper test;
+	Mine_Sweeper mygame;
+	while(mygame.alive){
+		mygame.get_square();
+		mygame.try_bomb();
+		mygame.prt_brd();
+	}
 	
 	return 0;
 }
+
+
